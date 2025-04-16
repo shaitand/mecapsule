@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+
+    - name: Install dependencies
+      run: |
+        python -m venv mecapsule-env
+        source mecapsule-env/bin/activate
+        pip install --upgrade pip
+        pip install -r requirements.txt
+
+    - name: Lint with flake8
+      run: |
+        source mecapsule-env/bin/activate
+        pip install flake8
+        flake8 mecapsule.py
+
+    - name: Run tests
+      run: |
+        source mecapsule-env/bin/activate
+        pip install pytest
+        pytest
